@@ -301,9 +301,9 @@ class TickerBase():
             s = _pd.DataFrame(index=[0], data=d)[-1:].T
             s.columns = ['Value']
             ratingYear_values = s[s.index == 'ratingYear']['Value'].values
-            ratingYear = ratingYear_values[0] if len(ratingYear_values)>0 else None
+            ratingYear = ratingYear_values[0] if len(ratingYear_values)>0 else 0
             ratingMonth_values = s[s.index == 'ratingMonth']['Value'].values
-            ratingMonth = ratingMonth_values[0] if len(ratingMonth_values)>0 else None
+            ratingMonth = ratingMonth_values[0] if len(ratingMonth_values)>0 else 0
             s.index.name = '%.f-%.f' % (ratingYear, ratingMonth)
 
             self._sustainability = s[~s.index.isin(
