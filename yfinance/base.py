@@ -282,7 +282,7 @@ class TickerBase():
         # holders
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
         holders = _pd.read_html(url)
-        self._major_holders = holders[0]
+        self._major_holders = holders[0] if len(holders)>0 else {}
         self._institutional_holders = holders[1] if len(holders)>1 else {}
         if 'Date Reported' in self._institutional_holders:
             self._institutional_holders['Date Reported'] = _pd.to_datetime(
@@ -300,9 +300,11 @@ class TickerBase():
 
             s = _pd.DataFrame(index=[0], data=d)[-1:].T
             s.columns = ['Value']
-            s.index.name = '%.f-%.f' % (
-                s[s.index == 'ratingYear']['Value'].values[0],
-                s[s.index == 'ratingMonth']['Value'].values[0])
+            ratingYear_values = s[s.index == 'ratingYear']['Value'].values
+            ratingYear = ratingYear_values[0] if len(ratingYear_values)>0 else None
+            ratingMonth_values = s[s.index == 'ratingMonth']['Value'].values
+            ratingMonth = ratingMonth_values[0] if len(ratingMonth_values)>0 else None
+            s.index.name = '%.f-%.f' % (ratingYear, ratingMonth)
 
             self._sustainability = s[~s.index.isin(
                 ['maxAge', 'ratingYear', 'ratingMonth'])]
