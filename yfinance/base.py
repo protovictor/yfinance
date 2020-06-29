@@ -281,16 +281,19 @@ class TickerBase():
 
         # holders
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
-        holders = _pd.read_html(url)
-        self._major_holders = holders[0] if len(holders)>0 else {}
-        self._institutional_holders = holders[1] if len(holders)>1 else {}
-        if 'Date Reported' in self._institutional_holders:
-            self._institutional_holders['Date Reported'] = _pd.to_datetime(
-                self._institutional_holders['Date Reported'])
-        if '% Out' in self._institutional_holders:
-            self._institutional_holders['% Out'] = self._institutional_holders[
-                '% Out'].str.replace('%', '').astype(float)/100
-
+        try :
+            holders = _pd.read_html(url)
+            self._major_holders = holders[0] if len(holders)>0 else {}
+            self._institutional_holders = holders[1] if len(holders)>1 else {}
+            if 'Date Reported' in self._institutional_holders:
+                self._institutional_holders['Date Reported'] = _pd.to_datetime(
+                    self._institutional_holders['Date Reported'])
+            if '% Out' in self._institutional_holders:
+                self._institutional_holders['% Out'] = self._institutional_holders[
+                    '% Out'].str.replace('%', '').astype(float)/100
+        except :
+            self._major_holders = {}
+            self._institutional_holders = {}
         # sustainability
         d = {}
         if isinstance(data.get('esgScores'), dict):
